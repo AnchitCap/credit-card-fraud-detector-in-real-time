@@ -1,0 +1,16 @@
+https://apache.claz.org/kafka/2.7.0/kafka-2.7.0-src.tgz kafka
+
+jar I have
+
+create external table TransactionsDynamoDB (transaction_id string,user_id string,card_number string,amount string,description string,transaction_type string,vendor string,approval_status string)
+STORED BY 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler'
+TBLPROPERTIES (
+"dynamodb.table.name" = "task3-transactions",
+"dynamodb.column.mapping"="transaction_id:transaction_id,user_id:user_id,card_number:card_number,amount:amount,description:description,transaction_type:transaction_type,vendor:vendor,approval_status:approval_status"
+)
+
+
+spark-submit --jars spark-streaming-kafka-0-8-assembly_2.11-2.4.7.jar,/usr/share/aws/emr/ddb/lib/emr-ddb-hadoop.jar,/usr/share/aws/emr/ddb/lib/emr-ddb-hive.jar,/usr/share/aws/emr/ddb/lib/emr-dynamodb-hadoop-4.16.0.jar,/usr/share/aws/emr/ddb/lib/emr-dynamodb-hive-4.16.0-jar-with-dependencies.jar transformer.py
+
+
+spark-submit --jars spark-streaming-kafka-0-8-assembly_2.11-2.4.7.jar,/usr/share/aws/emr/ddb/lib/emr-dynamodb-hadoop-4.16.0.jar, transformer.py

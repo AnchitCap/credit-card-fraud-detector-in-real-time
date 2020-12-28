@@ -1,0 +1,29 @@
+mport org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.spark.streaming.kafka010._
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+import org.apache.spark.streaming._
+sc.setLogLevel("ERROR")  // prevent INFO logging from polluting output
+val ssc =  StreamingContext.getActiveOrCreate(() => new StreamingContext(sc, Seconds(5)))    // creating the StreamingContext with 5 seconds interval
+val kafkaParams = Map[String, Object](
+  "bootstrap.servers" -> "vrxhdpkfknod.eastus.cloudapp.azure.com:6667",
+  "key.deserializer" -> classOf[StringDeserializer],
+  "value.deserializer" -> classOf[StringDeserializer],
+  "group.id" -> "kafka-streaming-example",
+  "auto.offset.reset" -> "earliest",
+  "enable.auto.commit" -> (false: java.lang.Boolean)
+)
+val topics = Array("spark-streaming")
+val messages = KafkaUtils.createDirectStream[String, String](
+  ssc,
+  PreferConsistent,
+  Subscribe[String, String](topics, kafkaParams)
+)
+messages.foreachRDD { rdd =>
+      System.out.println("--- New RDD with " + rdd.partitions.size + " partitions and " + rdd.count + " records")
+      rdd.foreach { record =>
+        System.out.print(record.value())
+      }
+    }
+ssc.start()
