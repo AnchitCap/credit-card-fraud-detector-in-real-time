@@ -7,7 +7,7 @@ function drawTable() {
     AWS.config.update({
         region: "us-east-1",
         accessKeyId: "AKIAWUOQNXJQAW7VH2WI",
-        secretAccessKey: "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"
+        secretAccessKey: "###########################"
     });
 
     var docClient = new AWS.DynamoDB.DocumentClient();
